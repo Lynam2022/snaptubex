@@ -42,16 +42,19 @@ RUN mkdir -p /app/bin /app/downloads /app/subtitles /app/temp
 # Set working directory
 WORKDIR /app
 
-# Copy package files first
+# Copy package files first and verify
 COPY package*.json ./
-
-# Install dependencies with error checking
-RUN if [ -f "package.json" ]; then \
+RUN ls -la && \
+    if [ -f "package.json" ]; then \
+        echo "Found package.json" && \
+        cat package.json && \
         echo "Installing dependencies..." && \
-        npm install && \
+        npm install --verbose && \
         echo "Dependencies installed successfully"; \
     else \
-        echo "Error: package.json not found" && exit 1; \
+        echo "Error: package.json not found in $(pwd)" && \
+        ls -la && \
+        exit 1; \
     fi
 
 # Copy the rest of the application
