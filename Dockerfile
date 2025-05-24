@@ -43,10 +43,13 @@ RUN mkdir -p /app/bin /app/downloads /app/subtitles /app/temp
 WORKDIR /app
 
 # Copy package files first
-COPY package.json ./
+COPY package*.json ./
 
-# Install dependencies
-RUN npm install --verbose
+# Install dependencies with better error handling
+RUN npm cache clean --force && \
+    npm config set registry https://registry.npmjs.org/ && \
+    npm install --verbose --no-audit --no-fund --no-optional && \
+    npm cache verify
 
 # Copy the rest of the application
 COPY . .
