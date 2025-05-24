@@ -42,23 +42,17 @@ RUN mkdir -p /app/bin /app/downloads /app/subtitles /app/temp
 # Set working directory
 WORKDIR /app
 
-# Copy package files first and verify
-COPY package*.json ./
-RUN ls -la && \
-    if [ -f "package.json" ]; then \
-        echo "Found package.json" && \
-        cat package.json && \
-        echo "Installing dependencies..." && \
-        npm install --verbose && \
-        echo "Dependencies installed successfully"; \
-    else \
-        echo "Error: package.json not found in $(pwd)" && \
-        ls -la && \
-        exit 1; \
-    fi
+# Copy package files first
+COPY package.json ./
+
+# Install dependencies
+RUN npm install --verbose
 
 # Copy the rest of the application
 COPY . .
+
+# Create required directories if they don't exist
+RUN mkdir -p downloads subtitles temp
 
 # Expose the port the app runs on
 EXPOSE 8080
