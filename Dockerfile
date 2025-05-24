@@ -1,18 +1,20 @@
-# Use Node.js as the base image
-FROM node:18
+# Use Ubuntu as the base image for better FFmpeg support
+FROM ubuntu:22.04
 
-# Install Python, FFmpeg and required build tools
+# Prevent interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install Node.js, Python, FFmpeg and required build tools
 RUN apt-get update && apt-get install -y \
+    curl \
+    gnupg \
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get update && apt-get install -y \
+    nodejs \
     python3 \
     python3-pip \
     build-essential \
     ffmpeg \
-    libavcodec58 \
-    libavformat58 \
-    libavutil56 \
-    libswscale5 \
-    libavfilter7 \
-    libavdevice58 \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/bin/python3 /usr/bin/python
 
