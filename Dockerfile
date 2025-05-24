@@ -20,15 +20,15 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Cài các gói cần thiết
-RUN apt-get update && apt-get install -y wget tar
+RUN apt-get update && apt-get install -y wget tar xz-utils
 
-# Cài FFmpeg static build từ gyan.dev (được cập nhật và có đầy đủ codec MP3)
-RUN wget https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-amd64-static.tar.xz \
-    && tar -xf ffmpeg-release-amd64-static.tar.xz \
-    && cp ffmpeg-*-amd64-static/ffmpeg /usr/local/bin/ffmpeg \
-    && cp ffmpeg-*-amd64-static/ffprobe /usr/local/bin/ffprobe \
+# Cài FFmpeg static build từ BtbN (được cập nhật và có đầy đủ codec MP3)
+RUN wget https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz \
+    && tar -xf ffmpeg-master-latest-linux64-gpl.tar.xz \
+    && cp ffmpeg-master-latest-linux64-gpl/bin/ffmpeg /usr/local/bin/ffmpeg \
+    && cp ffmpeg-master-latest-linux64-gpl/bin/ffprobe /usr/local/bin/ffprobe \
     && chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
-    && rm -rf ffmpeg-*-amd64-static*
+    && rm -rf ffmpeg-master-latest-linux64-gpl*
 
 # Verify FFmpeg installation and codecs
 RUN ffmpeg -version && \
