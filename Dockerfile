@@ -7,6 +7,12 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     build-essential \
     ffmpeg \
+    libavcodec-extra \
+    libavformat-extra \
+    libavutil-extra \
+    libswscale-extra \
+    libavfilter-extra \
+    libavdevice-extra \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/bin/python3 /usr/bin/python
 
