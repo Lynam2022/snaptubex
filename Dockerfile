@@ -8,6 +8,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     curl \
     gnupg \
+    lsb-release \
+    wget \
     && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get update && apt-get install -y \
     nodejs \
@@ -15,8 +17,19 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     build-essential \
     ffmpeg \
+    libavcodec-extra \
+    libavformat-extra \
+    libavutil-extra \
+    libswscale-extra \
+    libavfilter-extra \
+    libavdevice-extra \
+    libmp3lame0 \
+    libmp3lame-dev \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/bin/python3 /usr/bin/python
+
+# Create necessary directories
+RUN mkdir -p /app/bin /app/downloads /app/subtitles /app/temp
 
 # Set working directory
 WORKDIR /app
@@ -31,7 +44,7 @@ RUN npm ci
 COPY . .
 
 # Expose the port the app runs on
-EXPOSE 3000
+EXPOSE 8080
 
 # Command to run the application
 CMD ["npm", "start"] 
