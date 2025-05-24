@@ -48,16 +48,22 @@ COPY package*.json ./
 # Debug: Show Node.js and npm versions
 RUN node --version && npm --version
 
-# Debug: Show package.json contents
-RUN cat package.json
+# Debug: Show package.json contents and directory structure
+RUN ls -la && cat package.json
 
-# Install dependencies with better error handling and debugging
-RUN npm config set registry https://registry.npmjs.org/ && \
-    npm config set loglevel verbose && \
-    npm config set fetch-retries 5 && \
-    npm config set fetch-retry-mintimeout 20000 && \
-    npm config set fetch-retry-maxtimeout 120000 && \
-    npm install --verbose --no-audit --no-fund --no-optional --prefer-offline --no-package-lock
+# Configure npm with individual steps and error checking
+RUN npm config set registry https://registry.npmjs.org/ || echo "Failed to set registry" && \
+    npm config set loglevel verbose || echo "Failed to set loglevel" && \
+    npm config set fetch-retries 5 || echo "Failed to set fetch-retries" && \
+    npm config set fetch-retry-mintimeout 20000 || echo "Failed to set fetch-retry-mintimeout" && \
+    npm config set fetch-retry-maxtimeout 120000 || echo "Failed to set fetch-retry-maxtimeout"
+
+# Install dependencies with individual steps
+RUN npm install --verbose --no-audit --no-fund --no-optional --prefer-offline --no-package-lock || \
+    (echo "First npm install attempt failed, trying with --force..." && \
+     npm install --verbose --no-audit --no-fund --no-optional --prefer-offline --no-package-lock --force) || \
+    (echo "Second npm install attempt failed, trying with --legacy-peer-deps..." && \
+     npm install --verbose --no-audit --no-fund --no-optional --prefer-offline --no-package-lock --legacy-peer-deps)
 
 # Copy the rest of the application
 COPY . .
