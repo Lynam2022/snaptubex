@@ -10,19 +10,24 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     lsb-release \
     wget \
+    software-properties-common \
     && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get update && apt-get install -y \
     nodejs \
     python3 \
     python3-pip \
     build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install FFmpeg with all codecs
+RUN apt-get update && apt-get install -y \
     ffmpeg \
-    libavcodec-extra \
-    libavformat-extra \
-    libavutil-extra \
-    libswscale-extra \
-    libavfilter-extra \
-    libavdevice-extra \
+    libavcodec58 \
+    libavformat58 \
+    libavutil56 \
+    libswscale5 \
+    libavfilter7 \
+    libavdevice58 \
     libmp3lame0 \
     libmp3lame-dev \
     && rm -rf /var/lib/apt/lists/* \
