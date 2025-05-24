@@ -1,11 +1,12 @@
 # Use Node.js as the base image
 FROM node:18
 
-# Install Python and required build tools
+# Install Python, FFmpeg and required build tools
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     build-essential \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/bin/python3 /usr/bin/python
 
