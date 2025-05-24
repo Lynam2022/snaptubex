@@ -42,11 +42,17 @@ RUN mkdir -p /app/bin /app/downloads /app/subtitles /app/temp
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files first
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies with error checking
+RUN if [ -f "package.json" ]; then \
+        echo "Installing dependencies..." && \
+        npm install && \
+        echo "Dependencies installed successfully"; \
+    else \
+        echo "Error: package.json not found" && exit 1; \
+    fi
 
 # Copy the rest of the application
 COPY . .
