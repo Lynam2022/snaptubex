@@ -19,19 +19,16 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Install FFmpeg with all codecs
-RUN apt-get update && apt-get install -y \
-    ffmpeg \
-    libavcodec58 \
-    libavformat58 \
-    libavutil56 \
-    libswscale5 \
-    libavfilter7 \
-    libavdevice58 \
-    libmp3lame0 \
-    libmp3lame-dev \
-    && rm -rf /var/lib/apt/lists/* \
-    && ln -s /usr/bin/python3 /usr/bin/python
+# Cài các gói cần thiết
+RUN apt-get update && apt-get install -y wget tar
+
+# Cài FFmpeg static build từ gyan.dev (được cập nhật và có đầy đủ codec MP3)
+RUN wget https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-amd64-static.tar.xz \
+    && tar -xf ffmpeg-release-amd64-static.tar.xz \
+    && cp ffmpeg-*-amd64-static/ffmpeg /usr/local/bin/ffmpeg \
+    && cp ffmpeg-*-amd64-static/ffprobe /usr/local/bin/ffprobe \
+    && chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
+    && rm -rf ffmpeg-*-amd64-static*
 
 # Verify FFmpeg installation and codecs
 RUN ffmpeg -version && \
