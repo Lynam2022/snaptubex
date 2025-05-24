@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadSubtitleBtn = document.getElementById('downloadSubtitleBtn');
     const subtitleLanguage = document.getElementById('subtitleLanguage');
     const subtitleFormat = document.getElementById('subtitleFormat');
+    const pasteBtn = document.getElementById('pasteBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const validationIcon = document.getElementById('validationIcon');
 
     let selectedThumbnail = null;
     let currentVideoId = null;
@@ -575,6 +578,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Hàm xử lý nút dán
+    pasteBtn.addEventListener('click', async () => {
+        try {
+            const text = await navigator.clipboard.readText();
+            videoUrlInput.value = text;
+            videoUrlInput.dispatchEvent(new Event('input'));
+        } catch (err) {
+            Swal.fire({
+                title: 'Lỗi',
+                text: 'Không thể dán từ clipboard. Vui lòng thử lại!',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                customClass: {
+                    popup: 'swal-popup',
+                    title: 'swal-title',
+                    content: 'swal-content',
+                    confirmButton: 'swal-button'
+                }
+            });
+        }
+    });
+
+    // Hàm xử lý nút xóa
+    clearBtn.addEventListener('click', () => {
+        videoUrlInput.value = '';
+        videoUrlInput.dispatchEvent(new Event('input'));
+        pasteBtn.style.display = 'flex';
+        clearBtn.style.display = 'none';
+        validationIcon.classList.remove('visible');
+    });
+
+    // Cập nhật hiển thị nút dán/xóa và icon validation
     videoUrlInput.addEventListener('input', async () => {
         const rawUrl = videoUrlInput.value;
         const url = normalizeUrl(rawUrl);
@@ -583,12 +618,18 @@ document.addEventListener('DOMContentLoaded', () => {
             updatePlatformIcon(null);
             contentPreview.style.display = 'none';
             currentVideoId = null;
+            pasteBtn.style.display = 'flex';
+            clearBtn.style.display = 'none';
+            validationIcon.classList.remove('visible');
             return;
         }
 
         if (!isValidUrl(url)) {
             updatePlatformIcon(null);
             contentPreview.style.display = 'none';
+            pasteBtn.style.display = 'none';
+            clearBtn.style.display = 'flex';
+            validationIcon.classList.remove('visible');
             Swal.fire({
                 title: 'Link không hợp lệ',
                 text: 'Vui lòng nhập một URL hợp lệ (ví dụ: https://youtu.be/...)',
@@ -607,6 +648,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const platform = detectPlatform(url);
         if (platform) {
             updatePlatformIcon(platform);
+            pasteBtn.style.display = 'none';
+            clearBtn.style.display = 'flex';
+            validationIcon.classList.add('visible');
             try {
                 const metadata = await fetchMetadata(url, platform);
                 currentVideoId = metadata.videoId;
@@ -627,6 +671,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             updatePlatformIcon(null);
             contentPreview.style.display = 'none';
+            pasteBtn.style.display = 'none';
+            clearBtn.style.display = 'flex';
+            validationIcon.classList.remove('visible');
             Swal.fire({
                 title: 'Nền tảng không được hỗ trợ',
                 text: 'Vui lòng dán link từ TikTok, Instagram, YouTube, Twitter/X, Facebook hoặc Douyin.',

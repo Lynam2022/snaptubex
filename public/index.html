@@ -20,7 +20,12 @@
         <h1 class="title">Tải Video Youtube</h1>
         <p class="subtitle">Dán link từ TikTok, Instagram, YouTube, Twitter/X, Facebook, Douyin để tải video!</p>
         <div class="input-group">
-            <input type="text" id="videoUrl" placeholder="Dán link nội dung (ví dụ: https://youtu.be/...)">
+            <div class="input-wrapper">
+                <i id="validationIcon" class="fas fa-check-circle validation-icon"></i>
+                <input type="text" id="videoUrl" placeholder="Dán link nội dung (ví dụ: https://youtu.be/...)">
+                <button id="pasteBtn" class="paste-btn" title="Dán link"><i class="fas fa-paste"></i></button>
+                <button id="clearBtn" class="clear-btn" title="Xóa link" style="display: none;"><i class="fas fa-times"></i></button>
+            </div>
             <span id="platformIcon" class="platform-icon"></span>
             <button id="fetchBtn" class="fetch-btn">Tải Ngay</button>
         </div>
