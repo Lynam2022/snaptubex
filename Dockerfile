@@ -45,11 +45,19 @@ WORKDIR /app
 # Copy package files first
 COPY package*.json ./
 
-# Install dependencies with better error handling
-RUN npm cache clean --force && \
-    npm config set registry https://registry.npmjs.org/ && \
-    npm install --verbose --no-audit --no-fund --no-optional && \
-    npm cache verify
+# Debug: Show Node.js and npm versions
+RUN node --version && npm --version
+
+# Debug: Show package.json contents
+RUN cat package.json
+
+# Install dependencies with better error handling and debugging
+RUN npm config set registry https://registry.npmjs.org/ && \
+    npm config set loglevel verbose && \
+    npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    npm install --verbose --no-audit --no-fund --no-optional --prefer-offline --no-package-lock
 
 # Copy the rest of the application
 COPY . .
