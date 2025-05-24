@@ -33,6 +33,12 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/bin/python3 /usr/bin/python
 
+# Verify FFmpeg installation and codecs
+RUN ffmpeg -version && \
+    ffmpeg -codecs | grep mp3 && \
+    ffmpeg -codecs | grep h264 && \
+    ffmpeg -codecs | grep aac
+
 # Create necessary directories
 RUN mkdir -p /app/bin /app/downloads /app/subtitles /app/temp
 
