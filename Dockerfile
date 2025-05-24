@@ -58,12 +58,18 @@ RUN npm config set registry https://registry.npmjs.org/ || echo "Failed to set r
     npm config set fetch-retry-mintimeout 20000 || echo "Failed to set fetch-retry-mintimeout" && \
     npm config set fetch-retry-maxtimeout 120000 || echo "Failed to set fetch-retry-maxtimeout"
 
-# Install dependencies with individual steps
-RUN npm install --verbose --no-audit --no-fund --no-optional --prefer-offline --no-package-lock || \
-    (echo "First npm install attempt failed, trying with --force..." && \
-     npm install --verbose --no-audit --no-fund --no-optional --prefer-offline --no-package-lock --force) || \
-    (echo "Second npm install attempt failed, trying with --legacy-peer-deps..." && \
-     npm install --verbose --no-audit --no-fund --no-optional --prefer-offline --no-package-lock --legacy-peer-deps)
+# Install dependencies with better error handling
+RUN if [ -f "package.json" ]; then \
+        echo "Installing dependencies..." && \
+        npm cache clean --force && \
+        npm install --verbose --no-audit --no-fund --no-optional --prefer-offline --no-package-lock --legacy-peer-deps || \
+        (echo "First attempt failed, trying with --force..." && \
+         npm install --verbose --no-audit --no-fund --no-optional --prefer-offline --no-package-lock --force --legacy-peer-deps) || \
+        (echo "Second attempt failed, trying with --production..." && \
+         npm install --verbose --no-audit --no-fund --no-optional --prefer-offline --no-package-lock --production --legacy-peer-deps); \
+    else \
+        echo "No package.json found!" && exit 1; \
+    fi
 
 # Copy the rest of the application
 COPY . .
